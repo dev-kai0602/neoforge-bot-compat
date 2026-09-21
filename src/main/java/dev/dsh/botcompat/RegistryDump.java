@@ -60,10 +60,11 @@ public final class RegistryDump {
                 new GsonBuilder().setPrettyPrinting().create().toJson(root, writer);
             }
             LOGGER.info("[BotCompat] 注册表已导出: {}", out);
-            LOGGER.info("[BotCompat] 方块状态 {} 项 / 物品 {} 项 / 实体 {} 项",
+            LOGGER.info("[BotCompat] 方块状态 {} 项 / 模组物品 {} 项 / 实体 {} 项 / 可放置方块 {} 项",
                     root.getAsJsonArray("blocks").size(),
                     root.getAsJsonArray("items").size(),
-                    root.getAsJsonArray("entity_types").size());
+                    root.getAsJsonArray("entity_types").size(),
+                    root.getAsJsonArray("block_items").size());
         } catch (IOException | RuntimeException e) {
             LOGGER.error("[BotCompat] 注册表导出失败", e);
         }
@@ -154,6 +155,20 @@ public final class RegistryDump {
             entities.add(o);
         }
         root.add("entity_types", entities);
+
+        // ---- 方块 -> 能放置它的物品（BlockItem）----
+        // 机器人要「放置模组方块」，必须先知道该方块对应哪个物品、进而找到快捷栏槽位。
+        JsonArray blockItems = new JsonArray();
+        for (Map.Entry<ResourceKey<net.minecraft.world.item.Item>, net.minecraft.world.item.Item> entry
+                : BuiltInRegistries.ITEM.entrySet()) {
+            if (entry.getValue() instanceof net.minecraft.world.item.BlockItem blockItem) {
+                JsonObject o = new JsonObject();
+                o.addProperty("item", entry.getKey().location().toString());
+                o.addProperty("block", BuiltInRegistries.BLOCK.getKey(blockItem.getBlock()).toString());
+                blockItems.add(o);
+            }
+        }
+        root.add("block_items", blockItems);
 
         return root;
     }
