@@ -1,0 +1,36 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "GPL-3.0-or-later"
+
+[[mods]]
+modId = "botcompat"
+version = "${file.jarVersion}"
+displayName = "BotCompat - 机器人兼容 (NeoForge)"
+authors = "DSH"
+description = '''
+允许标准 Minecraft 协议客户端（例如基于 Azalea / Mineflayer 的无头机器人）连接 NeoForge 服务器。
+
+NeoForge 会要求客户端完成 mod 网络通道协商，而标准客户端没有 mod loader，协商必然失败并被断开
+（neoforge.network.negotiation.failure.vanilla.client.not_supported）。本模组在服务端把该判定改为
+“协商成功且没有任何 mod 通道”，并清空自定义 FeatureFlags，使机器人可以正常登录。
+
+限制：机器人只能识别原版内容，模组新增的方块 / 物品 / 实体对它不可见（通常表现为 air）。
+本模组只是打通协议层，让机器人能进服务器，不会同步任何模组内容。
+'''
+
+[[dependencies.botcompat]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1,)"
+ordering = "NONE"
+side = "SERVER"
+
+[[dependencies.botcompat]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.21.2)"
+ordering = "NONE"
+side = "SERVER"
+
+[[mixins]]
+config = "botcompat.mixins.json"

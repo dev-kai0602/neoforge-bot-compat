@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "dev.dsh.botcompat.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BundleFilterMixin",
+    "CheckFeatureFlagsMixin",
+    "CheckPacketMixin",
+    "NetworkRegistryMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

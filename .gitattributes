@@ -1,0 +1,8 @@
+*.java text eol=lf
+*.gradle text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.jar binary
+*.bat text eol=crlf
+gradlew text eol=lf

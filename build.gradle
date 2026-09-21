@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'net.neoforged.moddev' version '1.0.11'
+}
+
+group = 'dev.dsh'
+version = providers.gradleProperty('mod_version').get()
+base.archivesName = 'botcompat'
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+neoForge {
+    version = providers.gradleProperty('neoforge_version').get()
+
+    // 只做服务端模组，但仍需要声明 mods 让 MDG 生成元数据
+    mods {
+        botcompat {
+            sourceSet sourceSets.main
+        }
+    }
+
+    // 不在 CI/本地跑游戏，省去 run 配置解析失败的可能
+    validateAccessTransformers = true
+}
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title'     : 'botcompat',
+            'Specification-Vendor'    : 'DSH',
+            'Specification-Version'   : '1',
+            'Implementation-Title'    : 'BotCompat',
+            'Implementation-Version'  : project.version,
+            'Implementation-Vendor'   : 'DSH',
+            // Mixin 通过这个属性发现配置文件
+            'MixinConfigs'            : 'botcompat.mixins.json'
+        ])
+    }
+}
